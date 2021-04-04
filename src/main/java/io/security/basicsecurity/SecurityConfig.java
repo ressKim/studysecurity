@@ -2,6 +2,7 @@ package io.security.basicsecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,13 +25,30 @@ import java.io.IOException;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    UserDetailsService userDetailsService;
+//    @Autowired
+//    UserDetailsService userDetailsService;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("user").password("{noop}1111").roles("USER");
+        auth.inMemoryAuthentication().withUser("sys").password("{noop}1111").roles("SYS", "USER");
+        auth.inMemoryAuthentication().withUser("admin").password("{noop}1111").roles("ADMIN", "USER", "SYS");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+
+
+
+
+        //== 권한 설정과 표현식 ==//
+        // 이건 실전 상황에서 동적으로 적용하긴 쉽지 않다. 다른 방법이 있다.
         http
                 .authorizeRequests()
+                .antMatchers("/user").hasRole("USER")
+                .antMatchers("/admin/pay").hasRole("ADMIN")
+                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
                 .anyRequest().authenticated();
         http
                 .formLogin();
@@ -116,7 +134,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .userDetailsService(userDetailsService)
 //        ;
 
-                //=== 동시 세션 제어 === //
+        //=== 동시 세션 제어 === //
 //        http
 //                .sessionManagement()
 //                .maximumSessions(1) //최대 세션 허용 갯수
@@ -128,8 +146,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .sessionFixation().changeSessionId();// 기본값은 changeSessionId()
         //== sessionManagement 밑에 있는 세션 정책 ==//
 //        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)이건 if_required 가 기본값 이 외에 3가지 더 있다.
-
-
 
 
     }
