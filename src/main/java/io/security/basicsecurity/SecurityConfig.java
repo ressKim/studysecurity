@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,13 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         http
                 .formLogin();
-        http
-                .sessionManagement()
-                .maximumSessions(1) //최대 세션 허용 갯수
-                .maxSessionsPreventsLogin(false); //true 이면 n 명이상 세션이 안되서 접속을 못하게 한다.default 는 false
-
-
-
 
 
         //===  로그인 성공 했을 때 이동하는것 === //
@@ -121,6 +115,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .tokenValiditySeconds(3600)
 //                .userDetailsService(userDetailsService)
 //        ;
+
+                //=== 동시 세션 제어 === //
+//        http
+//                .sessionManagement()
+//                .maximumSessions(1) //최대 세션 허용 갯수
+//                .maxSessionsPreventsLogin(false); //true 이면 n 명이상 세션이 안되서 접속을 못하게 한다.default 는 false
+
+        // === 로그인 할때마다 세션 바뀌어서 세션을 보호 === //
+//        http
+//                .sessionManagement()
+//                .sessionFixation().changeSessionId();// 기본값은 changeSessionId()
+        //== sessionManagement 밑에 있는 세션 정책 ==//
+//        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)이건 if_required 가 기본값 이 외에 3가지 더 있다.
+
+
+
 
     }
 }
