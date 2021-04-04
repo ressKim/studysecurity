@@ -31,6 +31,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .anyRequest().authenticated();
+        http
+                .formLogin();
+        http
+                .sessionManagement()
+                .maximumSessions(1) //최대 세션 허용 갯수
+                .maxSessionsPreventsLogin(false); //true 이면 n 명이상 세션이 안되서 접속을 못하게 한다.default 는 false
+
+
+
+
+
+        //===  로그인 성공 했을 때 이동하는것 === //
 //        http
 //                .formLogin()
 //                .loginPage("/loginPage")
@@ -55,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                })
 //                .permitAll()
 //        ;
-//
+//        //===  로그인 실패 했을 때 이동하는것 === //
 //        http
 //                .logout()
 //                .logoutUrl("/logout")// default 는 post 방식으로만 동작
@@ -75,40 +87,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                })
 //        ;
 
-
-        http
-                .formLogin()
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-                        System.out.println("authentication" + authentication.getName());
-                        httpServletResponse.sendRedirect("/");
-                    }
-                })
-                .failureHandler(new AuthenticationFailureHandler() {
-                    @Override
-                    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-                        System.out.println("exception" + e.getMessage());
-                        httpServletResponse.sendRedirect("/login");
-                    }
-                })
-                .and()
-                .logout()
-                .logoutUrl("/logout")// default 는 post 방식으로만 동작
-                .logoutSuccessUrl("/logout")
-                .logoutSuccessHandler(new LogoutSuccessHandler() {
-                    @Override
-                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.sendRedirect("/login");
-                    }
-                })
-                .and()
-                .rememberMe()
-                .rememberMeParameter("remember")
-                .tokenValiditySeconds(3600)
-                .userDetailsService(userDetailsService)
-        ;
-
+        //=== remember me === //
+//
+//        http
+//                .formLogin()
+//                .successHandler(new AuthenticationSuccessHandler() {
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+//                        System.out.println("authentication" + authentication.getName());
+//                        httpServletResponse.sendRedirect("/");
+//                    }
+//                })
+//                .failureHandler(new AuthenticationFailureHandler() {
+//                    @Override
+//                    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+//                        System.out.println("exception" + e.getMessage());
+//                        httpServletResponse.sendRedirect("/login");
+//                    }
+//                })
+//                .and()
+//                .logout()
+//                .logoutUrl("/logout")// default 는 post 방식으로만 동작
+//                .logoutSuccessUrl("/logout")
+//                .logoutSuccessHandler(new LogoutSuccessHandler() {
+//                    @Override
+//                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//                        response.sendRedirect("/login");
+//                    }
+//                })
+//                .and()
+//                .rememberMe()
+//                .rememberMeParameter("remember")
+//                .tokenValiditySeconds(3600)
+//                .userDetailsService(userDetailsService)
+//        ;
 
     }
 }
